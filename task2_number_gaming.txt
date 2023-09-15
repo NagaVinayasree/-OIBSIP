@@ -1,0 +1,231 @@
+package numbergaming;
+import java.util.*;
+
+// This class is used to generate the random number 
+class GenerateRandomNumber
+{
+	// snum means system generated number
+    static int snum;
+    GenerateRandomNumber()
+    {
+    //Random class is used to generate a random number in java	
+    Random rand=new Random();
+    //100 - is the range of random number to be taken
+    snum=rand.nextInt(100);
+  // System.out.println(snum);
+    }
+}
+
+// This class is used to take the opinion of taking the challenge game("y") or normal game("n")
+class ChooseTargetLimit
+{
+	//Scanner class is used to take the runtime input
+    Scanner sc =new Scanner(System.in);
+    //opinion- to take challenge game("y") or normal game("n")
+    String opinion;
+    /* limit - if,to choose the challenge game ,it is a constraint to complete this with
+    in the specific no.of attempts,it can be chosen by user */
+    static int limit;
+    //constructor to take all the inputs from the user
+    ChooseTargetLimit()
+    {
+        System.out.println("Do you need target specific game or without target\n "
+        		+ "Enter y->target specified\n Enter n->without target (y/n):");
+        opinion=sc.next();
+        if(opinion.equals("y")||opinion.equals("Y"))
+        {
+            System.out.println("Enter the no.of rounds to complete this challenge(choose b/w 1 to 10)");
+            limit=sc.nextInt();
+            if(limit<=10 && limit>=1)
+            new UserNumber(0,"y");
+            else 
+            {
+            	System.out.println("Enter the number between 1 to 10 only for target game");
+            	new ChooseTargetLimit();
+            }
+        }
+        else{
+        	System.out.println("You can get maximum score as "+(14*20));
+             new UserNumber(0,"n");
+        }
+    }
+}
+
+/*This class is used to take the number from the user
+ and give the remaining number attempts to goal based on the challenge game & normal game*/
+
+class UserNumber
+{
+    static int unum;
+    Scanner sc=new Scanner(System.in);
+    UserNumber(int count,String x)
+    {
+    	
+    	if((x.equals("n")||x.equals("N")) && count<15)
+    	{
+    		if(count==0) 
+    			System.out.println("you have 15 chances only");
+    		if((x.equals("n")||x.equals("N"))&& (count>=1 && count<15))
+    		{
+        		int c=15-count;
+        		System.out.println("You have remaining "+c+ "chances ");	
+    		}
+    		System.out.println("Enter a number between 1 and 100 only");
+            unum=sc.nextInt();
+            new CheckNumber(unum,count,x);
+    		
+    	}
+    	if((x.equals("Y") || x.equals("y")) && count<ChooseTargetLimit.limit)
+    	{
+    		System.out.println("Enter a number between 1 and 100 only");
+            unum=sc.nextInt();
+            new CheckNumber(unum,count,x);	
+    	}
+    }
+}
+
+/* This class is used to tell if the entered number matches the guesses number
+or it is higher/lower than the generated number.*/
+
+class CheckNumber
+{
+    CheckNumber(int unum,int count,String x)
+    {
+        if(unum>=0 && unum<=100)
+        {
+            count++;
+            if(x.equals("y")||x.equals("Y"))
+            {
+            	if(count>=ChooseTargetLimit.limit &&(unum>GenerateRandomNumber.snum || unum<GenerateRandomNumber.snum))
+            		NLCount.rcount(count, x);
+            	else if(unum==GenerateRandomNumber.snum )
+                    NLCount.rcount(count,x);
+                else if(unum>GenerateRandomNumber.snum)
+                {
+                    System.out.println("The number is greater than the system number");
+                    new UserNumber(count,x);
+                }
+                else if(unum<GenerateRandomNumber.snum)
+                {
+                    System.out.println("The number is lesser than the system number");
+                    new UserNumber(count,x);
+                }  
+            }
+            if(x.equals("n")||x.equals("N"))
+            {
+                if(count>=15 &&(unum>GenerateRandomNumber.snum || unum<GenerateRandomNumber.snum))
+                {
+                	NLCount.rcount(count, x);
+                }
+                else if(unum==GenerateRandomNumber.snum )
+                    NLCount.rcount(count,x);
+                else if(unum>GenerateRandomNumber.snum)
+                {
+                    System.out.println("The number is greater than the system number");
+                    new UserNumber(count,x);
+                }
+                else if(unum<GenerateRandomNumber.snum)
+                {
+                    System.out.println("The number is lesser than the system number");
+                    new UserNumber(count,x);
+                }  
+            }
+               
+        }
+        else 
+        {
+            System.out.println("Invalid number..So,please enter a numer between 1 to 100 only");
+            new UserNumber(count,x);
+        } 
+    }
+}
+
+//Gives the status of the game whether won/loss And if won display no.of attempts and score after completion of game 
+
+class NLCount
+{
+	static Scanner sc=new Scanner(System.in);
+    static void rcount(int count,String x)
+    {
+    	
+        if(x.equals("y")||x.equals("Y") && count<=ChooseTargetLimit.limit)
+        {
+            if(UserNumber.unum==GenerateRandomNumber.snum)
+            {
+                System.out.println("you win");
+                if(AddOneMore.i==0) {
+       			 System.out.println("You take "+count+" to complete this");
+                 System.out.println("your Score is "+((15*20)-((ChooseTargetLimit.limit-count)*20)));
+                }
+       		 	else if(AddOneMore.i>0) {
+       			 System.out.println("You take "+(count+AddOneMore.i)+" attempts to complete this");
+                 System.out.println("your Score is "+((15*20)-((ChooseTargetLimit.limit+AddOneMore.i)*20)));
+       		 	}
+            }
+            else
+       	 	{
+       		 	System.out.println("You loss,Better luck next time");
+       		 	int add=15-ChooseTargetLimit.limit-AddOneMore.i;
+       		 	if(add>0)
+       		 	{
+       		 	System.out.println("if you want to add one more upto " +add+" attempts (y/n)");
+       		 	String choice=sc.next();
+       		 	if(choice.equals("Y") || choice.equals("y"))
+       		 	{
+       		 		if(UserNumber.unum==GenerateRandomNumber.snum )
+                    NLCount.rcount(count,x);
+       		 		else if(UserNumber.unum>GenerateRandomNumber.snum)
+       		 			System.out.println("The number is greater than the system number");
+       		 			
+       		 		else if(UserNumber.unum<GenerateRandomNumber.snum)
+       		 			System.out.println("The number is lesser than the system number");
+       		 		 
+       		 		new AddOneMore(count,x);
+       		 	}
+       		 	else if(choice.equals("n")||choice.equals("N"))
+       		 	{
+       		 		System.out.println("Game over,Try again");
+       		 	}
+       		 	
+       		 	}
+       	 	}
+           	
+        }
+        if((x.equals("n")||x.equals("N") && count<=15))
+        { 
+        	 if(UserNumber.unum==GenerateRandomNumber.snum) 
+        	 {
+        		 System.out.println("You won");
+        		 System.out.println("You take "+count+" to complete this");
+                 System.out.println("your Score is "+(15*20-count*20));
+        	 }
+        	 else
+        	 {
+        		 System.out.println("You loss,Better luck next time");
+        	 }		
+        }
+    }
+}
+
+class AddOneMore
+{
+	int rem=15-ChooseTargetLimit.limit;
+	static int i=0;
+	AddOneMore(int count,String x)
+	{
+		if(i<=rem) {
+			count--;
+			i++;
+		}
+		//System.out.println(count);
+			new UserNumber(count,x);	
+	}
+}
+class game
+{
+    public static void main(String args[])
+    {
+        new GenerateRandomNumber();
+        new ChooseTargetLimit();
+    }
+}
